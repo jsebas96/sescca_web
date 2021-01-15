@@ -1,0 +1,31 @@
+{% extends "core/base2.html" %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+    <section id="hero" class="d-flex align-items-center">
+
+    <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
+      <br><br><br><br><br><br>
+      <h1>SESCCA</h1>
+      <h2>Sistema Electrónico para el Suministro de Contingencias en el Comportamiento en el Aula</h2>
+      {% comment %} <h1>Build Better Websites With Bikin Template</h1>
+      <h2>We are team of talanted designers making websites with Bootstrap</h2> {% endcomment %}
+      <a href="{% url 'login' %}" class="btn-get-started scrollto">Login</a>
+      <img src="{% static 'core/assets/img/hero-img.png' %}" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
+    </div>
+
+  </section><!-- End Hero -->
+
+  <main id="main">
+    <script>
+      {% if request.user.is_authenticated %}
+        window.location.assign("{% url 'student_list' %}");
+      {% endif %}
+    </script>
+  </main><!-- End #main -->
+
+{% endblock %}

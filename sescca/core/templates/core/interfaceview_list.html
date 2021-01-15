@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Tablero{% endblock %}
+
+{% block content %}
+<style>
+    .icon-box {
+        text-align: center;
+        background: #00A9FE;
+        box-shadow: 0px 5px 90px 0px rgba(110, 123, 131, 0.1);
+        padding: 20px 10px;
+        border-radius: 25px;
+        transition: all ease-in-out 0.3s;
+    }
+
+    .icon-box h4 {
+        font-weight: 700;
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+
+    .icon-box h4 {
+        color: #fff;
+    }
+
+    .icon-box p {
+        line-height: 24px;
+        font-size: 10px;
+        margin-bottom: 0;
+        color:#fff;
+    }
+
+    .wrap {
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .wrap::before {
+        content: "";
+        background: rgba(255, 255, 255, 0.5);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        transition: all ease-in-out 0.3s;
+        z-index: 2;
+        opacity: 0;
+    }
+    .wrap .icon-box .links {
+        opacity: 1;
+        left: 0;
+        right: 0;
+        bottom: -60px;
+        z-index: 3;
+        position: absolute;
+        transition: all ease-in-out 0.3s;
+        display: flex;
+        justify-content: center;
+    }
+
+    .wrap .icon-box .links a {
+        color: #fff;
+        font-size: 28px;
+        text-align: center;
+        background: rgba(20, 157, 221, 0.75);
+        transition: 0.3s;
+        width: 50%;
+        border-radius: 10px;
+    }
+
+    .wrap .icon-box .links a:hover {
+        background: rgba(20, 157, 221, 0.95);
+        border-radius: 20px;
+    }
+    .wrap:hover::before {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 1;
+    }
+    .wrap:hover .icon-box .links {
+        opacity: 1;
+        bottom: 0;
+    }
+    img {
+        width:80%;
+    }
+</style>
+<main id="main">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-md-12 mx-auto mb-2">
+                <div class="section-title">
+                    <h2>Tablero</h2>
+                </div>
+                <div class="row">
+                    {% for view in interfaceview_list %}
+                    <div class="col-md-6">
+                        <div class="wrap mb-3">
+                            <div class="icon-box">
+                                <h4>{{view.name}}</h4>
+                                <div class="links">
+                                    {% if not view.active %}
+                                        <a href="#" title="Activar" onclick="ChangeView({{view.id}})"><i class="bx bx-window"></i></a>
+                                    {% else %}
+                                        <a href="#" title="Desactivar" onclick="ChangeView({{view.id}})"><i class="bx bx-window-close"></i></a>
+                                    {% endif %}
+                                </div>
+                                {% if view.active %}
+                                    <p>Vista Activa</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    <div>
+</main>
+<script>
+    function ChangeView(id){
+        const url = "{% url 'change_view' %}" + "?vw=" + id;
+        fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+            console.log(data);
+            if(data.change == true){
+                window.location.reload();
+            }else{
+                alert('Error cambiando de vista, intente otra vez');
+            }
+        });
+    }
+</script>
+{% endblock %}
