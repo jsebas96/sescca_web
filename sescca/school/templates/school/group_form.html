@@ -1,0 +1,172 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Grupo{% endblock %}
+
+{% block content %}
+    <style>.errorlist{color:red;} /*label{display:none}*/</style>
+    <main id="main">
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-md-12 mx-auto mb-5">
+                    <form action="" method="post">{% csrf_token %}
+                        <div class="section-title">
+                            <h2>Nuevo Grupo</h2>
+                        </div>
+                        <input type="text" name="name" class="form-control mb-3" placeholder="Nombre del grupo" id="id_name"
+                        {% if name %}value="{{name}}"{% endif %} required>
+                        <select class="form-control mb-3" name="campus" id="id_campus" onchange="campusSelected()" required>
+                            <option value="" disabled selected>Sede</option>
+                            {% for campus in campusses %}
+                                <option value="{{campus.id}}">
+                                    {{campus.name}}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <select class="form-control mb-3" name="worktime" id="id_worktime" onchange="worktimeSelected()" required>
+                            <option value="" disabled selected>Jornada</option>
+                        </select>
+
+                        <select class="form-control mb-3" name="section"  id="id_section" onchange="sectionSelected()" required>
+                            <option value="" disabled selected>Curso</option>
+                        </select>
+                        {% comment %} <div class="d-flex mb-2">
+                            <div class="dropdown mr-5">
+                                <select class="btn btn-secondary dropdown-toggle" id="campus">
+                                <option value="" disabled selected>Sede</option>
+                                {% for campus in campusses %}
+                                    <option value="{{campus.id}}" {% if campus.name == campus_name %}selected{% endif %}>
+                                        {{campus}}
+                                    </option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                            <div class="dropdown mr-5">
+                                <select class="btn btn-secondary dropdown-toggle form-control" id="worktime">
+                                <option value="" disabled selected>Jornada</option>
+                                {% for worktime in worktimes %}
+                                    <option value="{{worktime.id}}" {% if worktime.name == worktime_name %}selected{% endif %}>
+                                        {{worktime}}
+                                    </option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                            <div class="dropdown mr-5">
+                                <select class="btn btn-secondary dropdown-toggle form-control" id="section">
+                                <option value="" disabled selected>Curso</option>
+                                {% for section in sections %}
+                                    <option value="{{section.id}}"  {% if section == section_info %}selected{% endif %}>
+                                        {{section}}
+                                    </option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                            <button onclick="filter()" type="button" class="btn btn-info">Filtrar<i class="bx bx-search-alt ml-2"></i></button>
+                            <a class="ml-5 mt-2" href="{% url 'create_group' %}" id="all">Ver todos</a>
+                        </div> {% endcomment %}
+                        <ul class="list-group list-group-flush" id="id_students">
+                        {% comment %} {% for student in students %}
+                            <li class="list-group-item">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="student_list" id="{{student.id}}" value="{{student.id}}">
+                                <label class="custom-control-label" for="{{student.id}}">{{student.name}} {{student.last_name}}</label>
+                            </div>
+                            </li>
+                        {% endfor %} {% endcomment %}
+                        </ul>
+                        <p><input type="submit" class="btn btn-primary btn-block" value="Crear Grupo"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            var campus = document.getElementById("id_campus");
+            var worktime = document.getElementById("id_worktime");
+            var section = document.getElementById("id_section");
+            var student_table = document.getElementById("id_students");
+
+            worktime.style.display = "none";
+            section.style.display = "none";
+            student_table.style.display = "none";
+
+            function campusSelected(){
+                const url = "{% url 'campus' %}" + "?cam=" + campus.value;
+                fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                    if(data.created){
+                        worktime.style.display = "flex";
+                        worktime.innerHTML = '<option value="" disabled selected>Jornada</option>';
+                        let options = [];
+                        for(let i=0;i<data.worktimes.length;i++){
+                            options[i] = data.worktimes[i];
+                            worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
+                        }
+                    }
+                });
+            }
+
+            function worktimeSelected(){
+                const url = "{% url 'worktime' %}" + "?wt=" + worktime.value;
+                fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                    if(data.created){
+                        section.style.display = "flex";
+                        section.innerHTML = '<option value="" disabled selected>Curso</option>';
+                        let options = [];
+                        for(let i=0;i<data.sections.length;i++){
+                            options[i] = data.sections[i];
+                            section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
+                        }
+                    }
+                });
+            }
+
+            function sectionSelected(){
+                const url = "{% url 'section' %}" + "?st=" + section.value;
+                let output = "";
+                fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                    if(data.created){
+                        student_table.style.display = "flex";
+                        if(data.students > 0){
+                            students = data.students;
+                            output += '<label class="font-weight-bold form-control mb-2">Seleccionar Estudiantes</label>';
+                            for(let i=0; i < students.length; i++){
+                                output += '<li class="list-group-item"> <div class="custom-control custom-checkbox">';
+                                output += '<input type="checkbox" class="custom-control-input" name="student_list" id="';
+                                output += students[i].value; 
+                                output += '"value="'
+                                output += students[i].value; 
+                                output += '"><label class="custom-control-label" for="'
+                                output += students[i].value; 
+                                output += '">'
+                                output += students[i].name + ' ';
+                                output += students[i].last_name;
+                                output += '</label> </div> </li>';
+                            }
+                        } else{
+                            output += '<p style="color:green;">No hay estudiantes para agregar.</p>';
+                        }
+                        student_table.innerHTML = output;
+                    }
+                });
+            }
+            /*function filter(){
+                id_campus = document.getElementById("campus").value;
+                id_worktime = document.getElementById("worktime").value;
+                id_section = document.getElementById("section").value;
+                name = document.getElementById("id_name").value;
+                const url = "{% url 'create_group' %}" + "?cam=" + id_campus + "&wt=" + id_worktime + "&st=" + id_section + "&nm=" + name;
+                console.log(url);
+                window.location.assign(url);
+            }
+            let all = document.getElementById("all")
+            let url = window.location.href;
+            if(url.indexOf("?") > -1){
+            all.style.display = "inline-block";
+            }else{
+            all.style.display = "none";
+            }*/
+        </script>
+    </main>
+
+{% endblock %}

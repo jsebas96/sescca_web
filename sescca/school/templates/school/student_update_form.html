@@ -1,0 +1,89 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Editar{% endblock %}
+
+{% block content %}
+    <style>.errorlist{color:red;} label{display:none}</style>
+    <main id="main">
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-md-12 mx-auto mb-5">
+                    <form action="" method="post">{% csrf_token %}
+                        <div class="section-title">
+                            <h2>Editar Estudiante</h2>
+                        </div>
+                        {{ form.name }}
+                        {{ form.last_name }}
+                        
+                        <input type="number" class="form-control mb-3" name="id_board" placeholder="ID Tarjeta" 
+                        {% if student.id_board %} value="{{student.id_board}}" {% endif %}>
+                        
+                        <select class="form-control mb-3" name="campus" id="id_campus" onchange="campusSelected()" required>
+                            <option value="" disabled selected>Sede</option>
+                            {% for campus in campusses %}
+                                <option value="{{campus.id}}" {% if student.campus == campus %} selected {% endif %}>
+                                    {{campus.name}}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <select class="form-control mb-3" name="worktime" id="id_worktime" onchange="worktimeSelected()" required>
+                            <option value="" disabled selected>Jornada</option>
+                            {% for worktime in worktimes %}
+                                <option value="{{worktime.id}}" {% if student.worktime == worktime %} selected {% endif %}>
+                                    {{worktime.name}}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <select class="form-control mb-3" name="section" id="id_section" required>
+                            <option value="" disabled selected>Curso</option>
+                            {% for section in sections %}
+                                <option value="{{section.id}}" {% if student.section == section %} selected {% endif %}>
+                                    {{section}}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <p><input type="submit" class="btn btn-primary btn-block" value="Actualizar"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        var campus = document.getElementById("id_campus");
+        var worktime = document.getElementById("id_worktime");
+        var section = document.getElementById("id_section");
+
+        function campusSelected(){
+            const url = "{% url 'campus' %}" + "?cam=" + campus.value;
+            fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                if(data.created){
+                    worktime.innerHTML = '<option value="" disabled selected>Jornada</option>'
+                    let options = [];
+                    for(let i=0;i<data.worktimes.length;i++){
+                        options[i] = data.worktimes[i];
+                        worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
+                    }
+                }
+            });
+        }
+
+        function worktimeSelected(){
+            const url = "{% url 'worktime' %}" + "?wt=" + worktime.value;
+            fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                if(data.created){
+                    section.innerHTML = '<option value="" disabled selected>Curso</option>';
+                    let options = [];
+                    for(let i=0;i<data.sections.length;i++){
+                        options[i] = data.sections[i];
+                        section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Estudiantes{% endblock %}
+{% block content %}
+<style>
+  #info {
+    color:#10658F;
+    font-size:16px;
+  }
+  #info:hover {
+    color:black;
+  }
+</style>
+<main id="main">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-12 mx-auto mb-2">
+        <div class="section-title">
+            <h2>Estudiantes</h2>
+        </div>
+        {% if 'updated' in request.GET %}
+          <p style="color: green;">Estudiante actualizado.</p>
+        {% endif %}
+        <a href="{% url 'student_list' %}" id="info"><i class="bx bx-left-arrow-circle mr-1"></i>Volver</a>
+        <div class="d-flex mb-2 mt-3">
+          <div class="dropdown mr-4">
+            <select class="btn btn-secondary dropdown-toggle" id="campus" onchange="campusSelected()">
+              <option value="" disabled selected>Sede</option>
+              {% for campus in campusses %}
+                  <option value="{{campus.id}}" {% if campus.name == campus_name %}selected{% endif %}>
+                      {{campus}}
+                  </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="dropdown mr-4">
+            <select class="btn btn-secondary dropdown-toggle form-control" id="worktime" onchange="worktimeSelected()">
+              <option value="" disabled selected>Jornada</option>
+              {% for worktime in worktimes %}
+                  <option value="{{worktime.id}}" {% if worktime.name == worktime_name %}selected{% endif %}>
+                      {{worktime}}
+                  </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="dropdown mr-4">
+            <select class="btn btn-secondary dropdown-toggle form-control" id="section">
+              <option value="" disabled selected>Curso</option>
+              {% for section in sections %}
+                  <option value="{{section.id}}"  {% if section == section_info %}selected{% endif %}>
+                      {{section}}
+                  </option>
+              {% endfor %}
+            </select>
+          </div>
+          {% if groups %}
+            <div class="dropdown mr-4">
+              <select class="btn btn-secondary dropdown-toggle form-control" id="group">
+                <option value="" disabled selected>Grupo</option>
+                {% for group in groups %}
+                    <option value="{{group.id}}"  {% if group == group_object %}selected{% endif %}>
+                        {{group.name}}
+                    </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          <button onclick="filter()" type="button" class="btn btn-info">Filtrar<i class="bx bx-search-alt ml-2"></i></button>
+          <a class="ml-5 mt-2" href="{% url 'student_list2' %}" id="all">Ver todos</a>
+        </div>
+        <div class="table-responsive-sm">
+        <table class="table table-borderless table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Nombres</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in student_list %}
+              <tr>
+                <td>{{student.last_name}}</td>
+                <td>{{student.name}}</td>
+                <td>
+                  <a class="btn btn-info" href="#" title="Ver Estudiante"><i class="bx bxs-show"></i></a>
+                  <a class="btn btn-info" href="{% url 'update_student' student.id %}" title="Editar Estudiante"><i class="bx bx-edit"></i></a>
+                  <a class="btn btn-info" href="{% url 'delete_student' student.id %}" title="Borrar Estudiante"><i class="bx bx-trash"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  var campus = document.getElementById("campus");
+  var worktime = document.getElementById("worktime");
+  var section = document.getElementById("section");
+
+  function campusSelected(){
+      const url = "{% url 'campus' %}" + "?cam=" + campus.value;
+      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+        if(data.created){
+          worktime.innerHTML = '<option value="" disabled selected>Jornada</option>'
+          let options = [];
+          for(let i=0;i<data.worktimes.length;i++){
+              options[i] = data.worktimes[i];
+              worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
+          }
+      }
+      });
+    }
+
+    function worktimeSelected(){
+      const url = "{% url 'worktime' %}" + "?wt=" + worktime.value;
+      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+        if(data.created){
+          section.innerHTML = '<option value="" disabled selected>Curso</option>';
+          let options = [];
+          for(let i=0;i<data.sections.length;i++){
+              options[i] = data.sections[i];
+              section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
+          }
+        }
+      });
+    }
+
+
+  function filter(){
+      id_campus = campus.value;
+      id_worktime = worktime.value;
+      id_section = section.value;
+      var url = "{% url 'student_list2' %}" + "?cam=" + id_campus + "&wt=" + id_worktime + "&st=" + id_section;
+      {% if groups %}
+        id_group = document.getElementById("group").value;
+        url = url + '&gp=' + id_group;
+      {% endif %}
+      console.log(url);
+      window.location.assign(url);
+    }
+    let all = document.getElementById("all")
+    let url = window.location.href;
+    if(url.indexOf("?") > -1){
+      all.style.display = "inline-block";
+    }else{
+      all.style.display = "none";
+    }
+</script>
+{% endblock %}

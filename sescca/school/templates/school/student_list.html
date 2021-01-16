@@ -1,0 +1,226 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Estudiantes{% endblock %}
+{% block content %}
+<style>
+  .table td{
+    text-align:center;
+  }
+  .icon-box {
+    width:30%;
+    text-align: center;
+    background: #00A9FE;
+    padding: 10px 10px;
+    border-radius: 5px;
+    color: #fff;
+    margin: auto;
+  }
+  .icon-box .number{
+    font-size:18px;
+  }
+  #info {
+    color:#10658F;
+    font-size:16px;
+  }
+  #info:hover {
+    color:black;
+  }
+</style>
+<main id="main">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-12 mx-auto mb-2">
+        <div class="section-title">
+            <h2>Estudiantes</h2>
+        </div>
+        {% if 'created' in request.GET %}
+          <p style="color: green;">Estudiante registrado correctamente.</p>
+        {% endif %}
+        {% if group_object %}
+          <div class="mb-3">
+            <div class="mt-2 font-weight-bold icon-box">Promedio {{group_object.name}} <br> {{group_object.mean_score}}</div>
+          </div>
+        {% elif section_info %}  
+          <div class="mb-3">
+            <div class="mt-2 font-weight-bold icon-box">Promedio Curso {{section_info.grade}}{{section_info.letter}} <br> {{section_info.mean_score}}</div>
+          </div>
+        {% elif worktime_object %}  
+          <div class="mb-3">
+            <div class="mt-2 font-weight-bold icon-box">Promedio Jornada {{worktime_object.name}} <br> {{worktime_object.mean_score}}</div>
+          </div>
+        {% elif campus_object %}  
+          <div class="mb-3">
+            <div class="mt-2 font-weight-bold icon-box">Promedio Sede {{campus_object.name}} <br> {{campus_object.mean_score}}</div>
+          </div>
+        {% endif %}
+        <a href="{% url 'student_list2' %}" id="info"><i class="bx bx-detail mr-1"></i>Info Estudiantes</a>
+        <div class="d-flex mb-2 mt-3">
+          <div class="dropdown mr-4">
+            <select class="btn btn-secondary dropdown-toggle" id="campus" onchange="campusSelected()">
+              <option value="" disabled selected>Sede</option>
+              {% for campus in campusses %}
+                  <option value="{{campus.id}}" {% if campus.name == campus_name %}selected{% endif %}>
+                      {{campus}}
+                  </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="dropdown mr-4">
+            <select class="btn btn-secondary dropdown-toggle form-control" id="worktime" onchange="worktimeSelected()">
+              <option value="" disabled selected>Jornada</option>
+              {% for worktime in worktimes %}
+                  <option value="{{worktime.id}}" {% if worktime.name == worktime_name %}selected{% endif %}>
+                      {{worktime}}
+                  </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="dropdown mr-4">
+            <select class="btn btn-secondary dropdown-toggle form-control" id="section">
+              <option value="" disabled selected>Curso</option>
+              {% for section in sections %}
+                  <option value="{{section.id}}"  {% if section == section_info %}selected{% endif %}>
+                      {{section}}
+                  </option>
+              {% endfor %}
+            </select>
+          </div>
+          {% if groups %}
+            <div class="dropdown mr-4">
+              <select class="btn btn-secondary dropdown-toggle form-control" id="group">
+                <option value="" disabled selected>Grupo</option>
+                {% for group in groups %}
+                    <option value="{{group.id}}"  {% if group == group_object %}selected{% endif %}>
+                        {{group.name}}
+                    </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          <button onclick="filter()" type="button" class="btn btn-info">Filtrar<i class="bx bx-search-alt ml-2"></i></button>
+          <a class="ml-5 mt-2" href="{% url 'student_list' %}" id="all">Ver todos</a>
+        </div>
+        <div class="table-responsive-sm">
+        <table class="table table-borderless table-striped">
+          <thead class="thead-dark">
+            <tr class="text-center">
+              <th scope="col">ID Tarjeta</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Nombres</th>
+              <th scope="col">Puntaje</th>
+              <th scope="col">Acumulado</th>
+              <th scope="col">Reinicio Tarjeta</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in student_list %}
+              <tr>
+                <td>{{student.id_board}}</td>
+                <td>{{student.last_name}}</td>
+                <td>{{student.name}}</td>
+                <td>
+                  <button onclick="minus({{student.id}})" class="w3-button w3-small w3-circle w3-teal" value="{{student.id}}">-</button>  
+                  {{student.score}}  
+                  <button onclick="plus({{student.id}})" class="w3-button w3-small w3-circle w3-teal" value="{{student.id}}">+</button>
+                  <script>
+                    function plus(n){
+                      const url = "{% url 'plus_score' %}" + "?cs=" + n;
+                      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                        if(data.sent == true){
+                          window.location.reload();
+                        }else{
+                          alert("Error enviando +");
+                        }
+                      });
+                      
+                    }
+                    function minus(n){
+                      const url = "{% url 'minus_score' %}" + "?cs=" + n;
+                      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                        if(data.sent == true){
+                          window.location.reload();
+                        }else{
+                          alert("Error enviando -");
+                        }
+                      });
+                    }
+                  </script>
+                </td>
+                <td>{{student.accum_score}}</td>
+                <td><a class="btn btn-warning" onclick="recount({{student.id_board}})" title="Reiniciar Tarjeta {{student.id_board}}"><i class="bx bx-arrow-back"></i></a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div>
+      </div>
+    </div>
+  </div>
+  <script>
+    setInterval(function(){window.location.reload()}, 45000);
+
+    var campus = document.getElementById("campus");
+    var worktime = document.getElementById("worktime");
+    var section = document.getElementById("section");
+
+    function recount(id){
+      const url = "{% url 'restart_board' %}" + "?idb=" + id;
+      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+        if(data.recount == true){
+          window.location.reload();
+        }else{
+          alert("Error reiniciando Tarjeta");
+        }
+      });
+    }
+
+    function campusSelected(){
+      const url = "{% url 'campus' %}" + "?cam=" + campus.value;
+      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+          if(data.created){
+              worktime.innerHTML = '<option value="" disabled selected>Jornada</option>'
+              let options = [];
+              for(let i=0;i<data.worktimes.length;i++){
+                  options[i] = data.worktimes[i];
+                  worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
+              }
+          }
+      });
+    }
+
+    function worktimeSelected(){
+      const url = "{% url 'worktime' %}" + "?wt=" + worktime.value;
+      fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+          if(data.created){
+              section.innerHTML = '<option value="" disabled selected>Curso</option>';
+              let options = [];
+              for(let i=0;i<data.sections.length;i++){
+                  options[i] = data.sections[i];
+                  section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
+              }
+          }
+      });
+    }
+
+    function filter(){
+      id_campus = campus.value;
+      id_worktime = worktime.value;
+      id_section = section.value;
+      var url = "{% url 'student_list' %}" + "?cam=" + id_campus + "&wt=" + id_worktime + "&st=" + id_section;
+      {% if groups %}
+        id_group = document.getElementById("group").value;
+        url = url + '&gp=' + id_group;
+      {% endif %}
+      console.log(url);
+      window.location.assign(url);
+    }
+    let all = document.getElementById("all")
+    let url = window.location.href;
+    if(url.indexOf("?") > -1){
+      all.style.display = "inline-block";
+    }else{
+      all.style.display = "none";
+    }
+  </script>
+</main>
+{% endblock %}
