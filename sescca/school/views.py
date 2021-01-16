@@ -94,26 +94,84 @@ class StudentFormView(FormView):
         context['campusses'] = Campus.objects.all()
         return context
 
-@method_decorator(login_required, name='dispatch')
-class StudentListView(ListView):
-    model = Student
+def StudentListView(request):
+    template_name ='school/student_list.html'
+    context = {}
+    context['campusses'] = Campus.objects.all()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['campusses'] = Campus.objects.all()
+    if request.user.is_authenticated:
+        id_campus = request.GET.get('cam', None)
+        id_worktime = request.GET.get('wt', None)
+        id_section = request.GET.get('st', None)
+        id_group = request.GET.get('gp', None)
+        students = Student.objects.all()
+        if id_campus:
+            campus = Campus.objects.get(id=id_campus)
+            students = students.filter(campus=campus)
+            context['campus_object'] = campus
+            context['campus_name'] = campus.name
+            context['worktimes'] = Worktime.objects.filter(campus=campus)
+        if id_worktime:
+            worktime = Worktime.objects.get(id=id_worktime)
+            students = students.filter(worktime=worktime)
+            context['worktime_object'] = worktime
+            context['worktime_name'] = worktime.name
+            context['sections'] = Section.objects.filter(worktime=worktime)
+        if id_section:
+            section = Section.objects.get(id=id_section)
+            students = students.filter(section=section)
+            context['section_info'] = section
+            context['groups'] = Group.objects.filter(section=section)
+        if id_group:
+            group = Group.objects.get(id=id_group)
+            students = students.filter(group=group)
+            context['group_object'] = group
+        context['student_list'] = students
+        
+    else:
+        raise Http404("User is not authenticated")
+    return render(request, template_name, context)
 
-@method_decorator(login_required, name='dispatch')
-class StudentListView2(ListView):
-    model = Student
+def StudentListView2(request):
+    template_name = 'school/student_list2.html'
+    context = {}
+    context['campusses'] = Campus.objects.all()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['campusses'] = Campus.objects.all()
+    if request.user.is_authenticated:
+        id_campus = request.GET.get('cam', None)
+        id_worktime = request.GET.get('wt', None)
+        id_section = request.GET.get('st', None)
+        id_group = request.GET.get('gp', None)
+        students = Student.objects.all()
+        if id_campus:
+            campus = Campus.objects.get(id=id_campus)
+            students = students.filter(campus=campus)
+            context['campus_name'] = campus.name
+            context['worktimes'] = Worktime.objects.filter(campus=campus)
+        if id_worktime:
+            worktime = Worktime.objects.get(id=id_worktime)
+            students = students.filter(worktime=worktime)
+            context['worktime_name'] = worktime.name
+            context['sections'] = Section.objects.filter(worktime=worktime)
+        if id_section:
+            section = Section.objects.get(id=id_section)
+            students = students.filter(section=section)
+            context['section_info'] = section
+            context['groups'] = Group.objects.filter(section=section)
+        if id_group:
+            group = Group.objects.get(id=id_group)
+            students = students.filter(group=group)
+            context['group_object'] = group
+        context['student_list'] = students
+        
+    else:
+        raise Http404("User is not authenticated")
+    return render(request, template_name, context)
 
 @method_decorator(login_required, name='dispatch')
 class StudentUpdateView(UpdateView):
     form_class = StudentForm
-    template_name = 'dashboard/student_update_form.html'
+    template_name = 'school/student_update_form.html'
     
     def get_success_url(self):
         return reverse_lazy('student_list2') + '?updated'
