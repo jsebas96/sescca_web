@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Evaluación{% endblock %}
+
+{% block content %}
+    <style>.errorlist{color:red;} label{display:none}</style>
+    <main id="main">
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-md-12 mx-auto mb-5">
+                    <form action="" method="post">{% csrf_token %}
+                        <div class="section-title">
+                            <h2>Rango para Autoevaluación de Estudiantes</h2>
+                        </div>
+                        <div class="row ml-1 mb-2">
+                            <h4>Desactivar/Activar</h4>
+                            <label class="switch ml-4 mb-2 mt-1">
+                                <input type="checkbox" name="activate" id=activate onclick="myFunction()" value="{{form.activate}}">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <div class="col md-6">
+                                {{form.time_range}}
+                            </div>
+                            <div class="col md-6">
+                                <input type="text" value="Minutos" class="form-control mb-2" readonly>
+                            </div>
+                        </div>
+                        <p><input type="submit" class="btn btn-primary btn-block" value="Actualizar"></p>
+                    </form>
+                    <script>
+                        function myFunction(){
+                            var x = document.getElementById("activate");
+                            const url = "{% url 'activate' %}" + "?val=" + x.checked;
+                            //console.log(x.value);
+                            fetch(url);
+                            //window.location.reload();
+                        }
+                    </script>
+                    <!--<p>¿Ha olvidado su clave?, la puede recuperar <a href="{% url 'password_reset' %}"> aquí </a>. </p>-->
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
