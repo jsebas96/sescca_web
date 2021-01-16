@@ -127,7 +127,7 @@
                 fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
                     if(data.created){
                         student_table.style.display = "flex";
-                        if(data.students > 0){
+                        if(data.students.length > 0){
                             students = data.students;
                             output += '<label class="font-weight-bold form-control mb-2">Seleccionar Estudiantes</label>';
                             for(let i=0; i < students.length; i++){
@@ -143,7 +143,7 @@
                                 output += students[i].last_name;
                                 output += '</label> </div> </li>';
                             }
-                        } else{
+                        }else{
                             output += '<p style="color:green;">No hay estudiantes para agregar.</p>';
                         }
                         student_table.innerHTML = output;

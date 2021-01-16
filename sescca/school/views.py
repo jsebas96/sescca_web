@@ -54,7 +54,7 @@ def SectionSelected(request):
         for student in students:
             if not student.group_set.all():
                 json_response['students'].append({'name':student.name, 'last_name':student.last_name,'value':student.id})
-
+            
         json_response['created'] = True
     else:
         raise Http404("User is not authenticated")
