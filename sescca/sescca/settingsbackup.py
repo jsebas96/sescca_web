@@ -25,7 +25,7 @@ SECRET_KEY = '$ng#izkxxjof_rp(vb25ms9#6-+k2#7wac9d^pek^rf1llp5tu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.220',]
+ALLOWED_HOSTS = ['127.0.0.1',]
 
 
 # Application definition
@@ -79,12 +79,8 @@ WSGI_APPLICATION = 'sescca.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sesccabase',
-	'USER': 'pi',
-	'PASSWORD': 'OEnj9u#DhhB7E)|*0',
-	'HOST': 'localhost',
-	'PORT': '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
