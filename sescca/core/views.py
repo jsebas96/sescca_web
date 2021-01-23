@@ -1,7 +1,10 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.http import Http404, JsonResponse
 from django.views.generic import ListView
+from django.views.generic.edit import UpdateView
 from .models import InterfaceView
+from school.models import Campus
 
 # Create your views here.
 def home(request):
@@ -9,6 +12,20 @@ def home(request):
 
 class BoardView(ListView):
     model = InterfaceView
+
+class BoardUpdateView(UpdateView):
+    model = InterfaceView
+    fields = ['section',]
+    template_name = "core/interfaceview_update_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy('board') + '?updated'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
+        context['campusses'] = Campus.objects.all()
+        return context
 
 def change_view(request):
     if request.user.is_authenticated:

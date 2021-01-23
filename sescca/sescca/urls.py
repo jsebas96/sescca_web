@@ -22,6 +22,7 @@ urlpatterns = [
     path('', core_views.home, name='home'),
     path('board/', core_views.BoardView.as_view(), name='board'),
     path('board/change/', core_views.change_view, name='change_view'),
+    path('board/update/<int:pk>/', core_views.BoardUpdateView.as_view(), name='update_view'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('evaluation/', include('evaluation.urls')),
     path('school/', include('school.urls')),

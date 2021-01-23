@@ -1,0 +1,107 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Vista {%endblock %}
+
+{% block content %}
+    <style>.errorlist{color:red;} label{display:none}</style>
+    <main id="main">
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-md-12 mx-auto mb-5">
+                    <form action="" method="post">{% csrf_token %}
+                        <div class="section-title">
+                            <h2>Seleccionar Curso</h2>
+                        </div>
+                        <select class="form-control mb-3" name="campus" id="id_campus" onchange="campusSelected()" required>
+                            <option value="" disabled selected>Sede</option>
+                            {% for campus in campusses %}
+                                <option value="{{campus.id}}">
+                                    {{campus.name}}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <select class="form-control mb-3" name="worktime" id="id_worktime" onchange="worktimeSelected()" required>
+                            <option value="" disabled selected>Jornada</option>
+                        </select>
+
+                        <select class="form-control mb-3" name="section"  id="id_section" required>
+                            <option value="" disabled selected>Curso</option>
+                        </select>
+                        <p><input type="submit" class="btn btn-primary btn-block" value="Actualizar Curso"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            var campus = document.getElementById("id_campus");
+            var worktime = document.getElementById("id_worktime");
+            var section = document.getElementById("id_section");
+
+            worktime.style.display = "none";
+            section.style.display = "none";
+
+            function campusSelected(){
+                const url = "{% url 'campus' %}" + "?cam=" + campus.value;
+                fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                    if(data.created){
+                        worktime.style.display = "flex";
+                        worktime.innerHTML = '<option value="" disabled selected>Jornada</option>';
+                        let options = [];
+                        for(let i=0;i<data.worktimes.length;i++){
+                            options[i] = data.worktimes[i];
+                            {% if not interfaceview %}
+                                worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
+                            {% else %}
+                                if({{interfaceview.section.worktime.id}} == options[i].value){
+                                    worktime[worktime.options.length] = new Option(options[i].name, options[i].value, false, true);
+                                } else{
+                                    worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
+                                }
+                            {% endif %}
+                        }
+                        {% if interfaceview %}
+                            worktimeSelected();
+                        {% endif %}
+                    }
+                });
+            }
+
+            function worktimeSelected(){
+                const url = "{% url 'worktime' %}" + "?wt=" + worktime.value;
+                fetch(url, {'credentials':'include'}).then(response => response.json()).then(function(data){
+                    if(data.created){
+                        section.style.display = "flex";
+                        section.innerHTML = '<option value="" disabled selected>Curso</option>';
+                        let options = [];
+                        for(let i=0;i<data.sections.length;i++){
+                            options[i] = data.sections[i];
+                            {% if not interfaceview %}
+                                section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
+                            {% else %}
+                                if({{interfaceview.section.id}} == options[i].value){
+                                    section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value, false, true);
+                                } else{
+                                    section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
+                                }
+                            {% endif %}
+                        }
+                    }
+                });
+            }
+
+            {% if interfaceview %}
+                for(let m = 0; m<campus.options.length;m++){
+                    if({{interfaceview.section.worktime.campus.id}} == campus.options[m].value){
+                        campus.value = campus.options[m].value;
+                        campusSelected();
+                        break;
+                    }
+                }
+            {% endif %}
+        </script>
+    </main>
+
+{% endblock %}
