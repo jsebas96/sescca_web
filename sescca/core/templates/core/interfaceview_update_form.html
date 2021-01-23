@@ -52,7 +52,7 @@
                         let options = [];
                         for(let i=0;i<data.worktimes.length;i++){
                             options[i] = data.worktimes[i];
-                            {% if not interfaceview %}
+                            {% if not interfaceview.section %}
                                 worktime[worktime.options.length] = new Option(options[i].name, options[i].value);
                             {% else %}
                                 if({{interfaceview.section.worktime.id}} == options[i].value){
@@ -62,7 +62,7 @@
                                 }
                             {% endif %}
                         }
-                        {% if interfaceview %}
+                        {% if interfaceview.section %}
                             worktimeSelected();
                         {% endif %}
                     }
@@ -78,7 +78,7 @@
                         let options = [];
                         for(let i=0;i<data.sections.length;i++){
                             options[i] = data.sections[i];
-                            {% if not interfaceview %}
+                            {% if not interfaceview.section %}
                                 section[section.options.length] = new Option(options[i].grade + options[i].letter, options[i].value);
                             {% else %}
                                 if({{interfaceview.section.id}} == options[i].value){
@@ -92,7 +92,7 @@
                 });
             }
 
-            {% if interfaceview %}
+            {% if interfaceview.section %}
                 for(let m = 0; m<campus.options.length;m++){
                     if({{interfaceview.section.worktime.campus.id}} == campus.options[m].value){
                         campus.value = campus.options[m].value;

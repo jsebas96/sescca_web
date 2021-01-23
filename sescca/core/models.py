@@ -4,7 +4,7 @@ from school.models import Section
 class InterfaceView(models.Model):
     name = models.CharField(max_length=20, verbose_name='Nombre Vista')
     active = models.BooleanField(verbose_name='Vista Activa', default=False)
-    section = models.OneToOneField(Section, on_delete=models.PROTECT, blank=True, null=True)
+    section = models.ForeignKey(Section, on_delete=models.PROTECT, blank=True, null=True)
 
     class Meta:
         verbose_name = 'vista'
