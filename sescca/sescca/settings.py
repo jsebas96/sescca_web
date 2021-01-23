@@ -25,7 +25,7 @@ SECRET_KEY = '$ng#izkxxjof_rp(vb25ms9#6-+k2#7wac9d^pek^rf1llp5tu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.220',]
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.200',]
 
 
 # Application definition
