@@ -1,6 +1,6 @@
 import threading, time, requests, random, os
-from dashboard.models import AutoEvaluation
-from dashboard.models import Student
+from evaluation.models import AutoEvaluation
+from school.models import Student
 payload = {'data':'alert'}
 
 def timer_interrupt():

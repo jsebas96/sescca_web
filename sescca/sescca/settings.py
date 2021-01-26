@@ -25,7 +25,7 @@ SECRET_KEY = '$ng#izkxxjof_rp(vb25ms9#6-+k2#7wac9d^pek^rf1llp5tu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.200',]
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.200', 'sescca.duckdns.org',]
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'core',
     'evaluation',
     'school'
@@ -126,6 +127,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 
 #Auth urls
 

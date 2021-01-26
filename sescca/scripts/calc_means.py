@@ -1,5 +1,5 @@
 import threading
-from dashboard.models import Student, Campus, Worktime, Section, Group
+from school.models import Student, Campus, Worktime, Section, Group
 
 def calculate():
     students = Student.objects.all()
