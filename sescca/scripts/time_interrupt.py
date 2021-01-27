@@ -7,10 +7,11 @@ payload = {'data':'alert'}
 def timer_interrupt():
     print("Interrupt")
     views = InterfaceView.objects.all()
+    section = None
     for view in views:
         if view.active == True:
             section = view.section
-    if section:
+    if section != None:
         students = Student.objects.filter(section=section)
         for student in students:
             if student.ip_board:
@@ -30,7 +31,7 @@ def run():
         timer_b = timer.time_range * 60 + timer.time_range * 30
         timer_a = 45
         last_time = timer.time_range
-        clock = threading.Timer(10, timer_interrupt)
+        clock = threading.Timer(random.randint(timer_a, timer_b), timer_interrupt)
         clock.start()
         while timer.activate is True:
             time.sleep(0.5)
