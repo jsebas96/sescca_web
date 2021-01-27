@@ -6,12 +6,9 @@ payload = {'data':'alert'}
 
 def timer_interrupt():
     print("Interrupt")
-    views = InterfaceView.objects.all()
-    section = None
-    for view in views:
-        if view.active == True:
-            section = view.section
-    if section != None:
+    view = InterfaceView.objects.get(name="Vista individual")
+    if view.section:
+        section = view.section
         students = Student.objects.filter(section=section)
         for student in students:
             if student.ip_board:
