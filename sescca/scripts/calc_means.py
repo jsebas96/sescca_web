@@ -15,7 +15,8 @@ def calculate():
                 if campus == student.campus:
                     students_in += 1
                     mean = mean + student.score
-            campus.mean_score = mean / students_in
+            if students_in != 0:
+                campus.mean_score = mean / students_in
             campus.save()
     if worktimes:
         for worktime in worktimes:
@@ -25,7 +26,8 @@ def calculate():
                 if worktime == student.worktime:
                     students_in += 1
                     mean = mean + student.score
-            worktime.mean_score = mean / students_in
+            if students_in != 0:
+                worktime.mean_score = mean / students_in
             worktime.save()
     if sections:
         for section in sections:
@@ -35,14 +37,16 @@ def calculate():
                 if section == student.section:
                     students_in += 1
                     mean = mean + student.score
-            section.mean_score = mean / students_in
+            if students_in != 0:
+                section.mean_score = mean / students_in
             section.save()
     if groups:
         for group in groups:
             mean = 0
             for student in group.students.all():
                 mean = mean + student.score
-            group.mean_score = mean / len(group.students.all())
+            if len(group.students.all()) != 0:
+                group.mean_score = mean / len(group.students.all())
             group.save()
     run()
 def run():
