@@ -3,6 +3,10 @@
 {% block title %}Estudiantes{% endblock %}
 {% block content %}
 <style>
+  #student_table th {
+    width: 25%;
+    overflow: auto;
+  }
   .table td{
     text-align:center;
   }
@@ -101,14 +105,14 @@
           <a class="ml-5 mt-2" href="{% url 'student_list' %}" id="all">Ver todos</a>
         </div>
         <div class="table-responsive-sm">
-        <table class="table table-borderless table-striped">
+        <table class="table table-borderless table-striped" id="student_table">
           <thead class="thead-dark">
             <tr class="text-center">
-              <th scope="col">ID Tarjeta</th>
+              <th scope="col" style="width:10%;">ID</th>
               <th scope="col">Apellidos</th>
               <th scope="col">Nombres</th>
               <th scope="col">Puntaje</th>
-              <th scope="col">Acumulado</th>
+              <th scope="col" style="width:10%;">Acum</th>
               <th scope="col">Reinicio Tarjeta</th>
             </tr>
           </thead>

@@ -43,8 +43,8 @@ def restart_board(request):
         id = request.GET.get('idb', None)
         if id:
             student = get_object_or_404(Student, id_board=id)
-            response = os.popen(f"ping -c 4 {student.ip_board}").read()
-            if "4 received" in response:
+            response = os.popen(f"ping -c 2 {student.ip_board}").read()
+            if "2 received" in response:
                 #print(student.ip_board)
                 _ = requests.get("http://"+str(student.ip_board), params={'recount':'true'})
                 json_response['recount'] = True
@@ -75,8 +75,8 @@ def plus_score(request):
         id = request.GET.get('cs', None)
         if id:
             student = get_object_or_404(Student, id=id)
-            response = os.popen(f"ping -c 4 {student.ip_board}").read()
-            if "4 received" in response:
+            response = os.popen(f"ping -c 2 {student.ip_board}").read()
+            if "2 received" in response:
                 #print(student.ip_board)
                 _ = requests.get("http://"+str(student.ip_board), params={'plus':'true'})
                 student.score = student.score + 1
@@ -95,8 +95,8 @@ def minus_score(request):
         id = request.GET.get('cs', None)
         if id:
             student = get_object_or_404(Student, id=id)
-            response = os.popen(f"ping -c 4 {student.ip_board}").read()
-            if "4 received" in response:
+            response = os.popen(f"ping -c 2 {student.ip_board}").read()
+            if "2 received" in response:
                 _ = requests.get("http://"+str(student.ip_board), params={'minus':'true'})
                 student.score = student.score - 1
                 student.accum_score = student.accum_score - 1

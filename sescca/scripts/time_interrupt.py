@@ -8,14 +8,14 @@ salida = False
 def timer_interrupt():
     global salida
     print("Interrupt")
-    view = InterfaceView.objects.get(name="Vista individual")
+    view = InterfaceView.objects.get(name="Vista Individual")
     if view.section:
         section = view.section
         students = Student.objects.filter(section=section)
         for student in students:
             if student.ip_board:
-                response = os.popen(f"ping -c 4 {student.ip_board}").read()
-                if "4 received" in response:
+                response = os.popen(f"ping -c 2 {student.ip_board}").read()
+                if "2 received" in response:
                     url = "http://" + student.ip_board
                     r = requests.get(url, params=payload)
                     print(r.status_code)
