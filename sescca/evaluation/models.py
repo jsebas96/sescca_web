@@ -11,3 +11,6 @@ class AutoEvaluation(models.Model):
 
     def __str__(self):
         return str(self.time_range) + ' Minutos'
+
+class Disruption(models.Model):
+    active = models.BooleanField(verbose_name='Estado Sensores', default=False)
