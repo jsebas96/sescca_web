@@ -36,7 +36,7 @@ def run():
     if disrupt.active is True:
         clock = threading.Timer(10, disruption)
         clock.start()
-        while disrupt.activate is True:
+        while disrupt.active is True:
             disrupt = Disruption.objects.get(id=1)
             if salida is True:
                 salida = False
@@ -44,4 +44,4 @@ def run():
                 break
         clock.cancel()
         print("Cancel Timer")
-        run()
+    run()

@@ -36,6 +36,13 @@
       <div class="col-md-12 mx-auto mb-2">
         <div class="section-title">
             <h2>Estudiantes</h2>
+            <div class="row ml-1 mb-2">
+                <h4>Desactivar/Activar Sensores</h4>
+                <label class="switch ml-4 mb-2 mt-1">
+                    <input type="checkbox" id=activate onclick="myFunction()" {% if state is True %}checked{% endif %}>
+                    <span class="slider round"></span>  
+                </label>
+            </div>
         </div>
         {% if 'created' in request.GET %}
           <p style="color: green;">Estudiante registrado correctamente.</p>
@@ -224,6 +231,14 @@
       all.style.display = "inline-block";
     }else{
       all.style.display = "none";
+    }
+
+    function myFunction(){
+      var x = document.getElementById("activate");
+      const url = "{% url 'disruption' %}" + "?val=" + x.checked;
+      console.log(x.checked);
+      fetch(url);
+      //window.location.reload();
     }
   </script>
 </main>

@@ -9,7 +9,7 @@ from django import forms
 
 from .forms import StudentForm, GroupForm
 from .models import Student, Campus, Worktime, Section, Group
-
+from evaluation.models import Disruption
 # Create your views here.
 def CampusSelected(request):
     json_response = {'created':False}
@@ -98,6 +98,11 @@ def StudentListView(request):
     template_name ='school/student_list.html'
     context = {}
     context['campusses'] = Campus.objects.all()
+    disrupt = Disruption.objects.get(id=1)
+    if disrupt.active is True:
+        context['state'] = True
+    else:
+        context['state'] = False
 
     if request.user.is_authenticated:
         id_campus = request.GET.get('cam', None)

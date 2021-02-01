@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
-from .models import AutoEvaluation
+from .models import AutoEvaluation, Disruption
 from .forms import AutoEvaluationForm
 
 from school.models import Student
@@ -56,7 +56,7 @@ def restart_board(request):
 
 def activate_view(request):
     if request.user.is_authenticated:
-        id = 1;
+        id = 1
         value = request.GET.get('val', None)
         if id:
             time = get_object_or_404(AutoEvaluation, id=id)
@@ -68,6 +68,23 @@ def activate_view(request):
     else:
         raise Http404("User is not authenticated")
     return render(request, 'dashboard/autoevaluation_form.html')
+
+def activate_disruption(request):
+    json_response = {'updated':'False'}
+    if request.user.is_authenticated:
+        id = 1
+        value = request.GET.get('val', None)
+        if id:
+            disrupt = get_object_or_404(Disruption, id=id)
+            if value == 'true':
+                disrupt.active = True
+            else: 
+                disrupt.active = False
+            disrupt.save()
+            json_response['updated'] = True
+    else:
+        raise Http404("User is not authenticated")
+    return JsonResponse(json_response)
 
 def plus_score(request):
     json_response = {'sent':'False'}
