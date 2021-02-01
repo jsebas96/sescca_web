@@ -14,7 +14,7 @@ class StudentAdmin(admin.ModelAdmin):
     model = Student
     list_display = ['last_name', 'name', 'id_board', 'ip_board', 'score',]
     list_filter = (('campus', custom_titled_filter('Sede')), ('worktime', custom_titled_filter('Jornada')), ('section', custom_titled_filter('Curso')))
-    readonly_fields = ["accum_score",]
+    readonly_fields = ["accum_score", "disruption",]
 
 class GroupAdmin(admin.ModelAdmin):
     model = Group

@@ -51,6 +51,7 @@ class Student(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     worktime = models.ForeignKey(Worktime, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    disruption = models.BooleanField(verbose_name='Interrupción', default=False)
 
     class Meta:
         verbose_name = 'estudiante'
