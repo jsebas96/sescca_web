@@ -124,3 +124,27 @@ def minus_score(request):
     else:
         raise Http404("User is not authenticated")
     return JsonResponse(json_response)
+
+def receive_score_from_board(request):
+    json_response = {'received':'False'}
+    id = int(request.GET.get('id', None))
+    state = int(request.GET.get('state', None))
+    if id:
+        student = get_object_or_404(Student, id=id)
+        if (state == 1) & (student.disruption == False):
+            student.score = student.score + 1
+            student.accum_score = student.accum_score + 1
+        elif (state == 1) & (student.disruption == True):
+            student.score = student.score - 1
+            student.accum_score = student.accum_score - 1
+            student.disruption = False
+        elif (state == 0) & (student.disruption) == True:
+            student.score = student.score - 1
+            student.accum_score = student.accum_score - 1
+            student.disruption = False
+        elif (state) == 0 & (student.disruption) == False:
+            student.score = student.score + 1
+            student.accum_score = student.accum_score + 1
+        student.save()
+        json_response['received'] = True
+    return JsonResponse(json_response)
