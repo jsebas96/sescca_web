@@ -83,7 +83,7 @@
                 <td>{{student.last_name}}</td>
                 <td>{{student.name}}</td>
                 <td>
-                  <a class="btn btn-info" href="#" title="Ver Estudiante"><i class="bx bxs-show"></i></a>
+                  <a class="btn btn-info" href="{% url 'ind_report' student.id %}" title="Ver Estudiante"><i class="bx bxs-show"></i></a>
                   <a class="btn btn-info" href="{% url 'update_student' student.id %}" title="Editar Estudiante"><i class="bx bx-edit"></i></a>
                   <a class="btn btn-info" href="{% url 'delete_student' student.id %}" title="Borrar Estudiante"><i class="bx bx-trash"></i></a>
                 </td>

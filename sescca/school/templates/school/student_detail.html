@@ -1,0 +1,139 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Reporte{% endblock %}
+
+{% block content %}
+    <style>.errorlist{color:red;} label{display:none}</style>
+    <main id="main">
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-md-12 mx-auto mb-5">
+                    <div class="section-title">
+                        <h2>{{student.name}}  {{student.last_name}}</h2>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="position-relative mt-2 mb-2">
+                            <p style="border: 5px solid #00A9FE; padding:2%; border-radius:5px;">
+                                <b style="color:#00A9FE; margin-left:5%;">Sede:</b>  {{student.campus}}
+                                <b style="color:#00A9FE; margin-left:5%;"> Jornada:</b> {{student.worktime}}
+                                <b style="color:#00A9FE; margin-left:5%;"> Curso:</b> {{student.section}}
+                                <b style="color:#00A9FE; margin-left:5%;"> Grupo:</b> 
+                                {% if student.group %}
+                                    {{student.group}}
+                                {% else  %}
+                                    No asignado
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="position-relative mt-2 mb-2">
+                            Filtro Fechas
+                        </div>
+                        <div class="position-relative mt-2 mb-2">
+                            <table class="table table-borderless table-striped" id="student_table">
+                                <thead class="thead-dark">
+                                    <tr class="text-center">
+                                        <th scope="col"></th>
+                                        <th scope="col">Reporte</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td style="color:#00A9FE;"><b>Conductas</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                                {% if conduct_list %}
+                                                <table class="table mb-0">
+                                                    <thead class="text-center">
+                                                        <th scope="col">Fecha</th>
+                                                        <th scope="col">Conducta</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for conduct in conduct_list %}
+                                                            <tr>
+                                                                <th scope="row">{{conduct.date}}</th>
+                                                                <td>{{conduct.conduct}}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                        
+                                            {% else %}
+                                                <p style="color:red; margin-left:5%;">No hay registros para el estudiante</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="color:#00A9FE;"><b>Puntajes Diarios</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">
+                                                {% if daily_score_list %}
+                                                <table class="table mb-0">
+                                                    <thead class="text-center">
+                                                        <th scope="col">Fecha</th>
+                                                        <th scope="col">Puntaje</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for daily_score in daily_score_list %}
+                                                            <tr>
+                                                                <th scope="row">{{daily_score.date}}</th>
+                                                                <td>{{daily_score.daily_score}}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                        
+                                            {% else %}
+                                                <p style="color:red; margin-left:5%;">No hay registros para el estudiante</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="color:#00A9FE;"><b>Puntajes Semanales</b></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"
+>
+                                                {% if weekly_score_list %}
+                                                <table class="table mb-0">
+                                                    <thead class="text-center">
+                                                        <th scope="col">Fecha</th>
+                                                        <th scope="col">Conducta</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for weekly_score in weekly_score_list %}
+                                                            <tr>
+                                                                <th scope="row">{{weekly_score.date}}</th>
+                                                                <td>{{weekly_score.weekly_score}}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                        
+                                            {% else %}
+                                                <p style="color:red; margin-left:5%;">No hay registros para el estudiante</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% if conduct_list or daily_score_list or weekly_score_list %}
+                        <div class="text-center"><a href='#' class="btn btn-success">Descargar Reporte .xls</a></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
