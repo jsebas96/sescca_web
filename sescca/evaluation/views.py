@@ -127,8 +127,8 @@ def minus_score(request):
 
 def receive_score_from_board(request):
     json_response = {'received':'False'}
-    id = int(request.GET.get('id', None))
-    state = int(request.GET.get('state', None))
+    id = int(request.POST.get('id', None))
+    state = int(request.POST.get('state', None))
     if id:
         student = get_object_or_404(Student, id=id)
         if (state == 1) & (student.disruption == False):
