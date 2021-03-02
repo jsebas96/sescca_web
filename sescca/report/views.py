@@ -1,14 +1,16 @@
-from django.views.generic import DetailView, TemplateView, CreateView
+from django.shortcuts import render
+from django.views.generic import CreateView
 from openpyxl.styles.alignment import Alignment
 from school.models import Student
 from .models import Conduct, DailyData, WeeklyData
 from django.http.response import HttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import Font
-import datetime
 
 import pytz
 from django.utils import timezone
+
+import datetime
 
 
 def convert_to_localtime(utctime):
@@ -18,41 +20,52 @@ def convert_to_localtime(utctime):
     return localtz.strftime(fmt)
 
 # Create your views here.
-class IndividualReport(DetailView):
-    model = Student
+def IndividualReport(request, pk):
+    student = Student.objects.get(id=pk)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        pk = self.kwargs.get(self.pk_url_kwarg)
-        student = Student.objects.get(id=pk)
-        context['conduct_list'] = Conduct.objects.filter(student=student)
-        context['daily_score_list'] = DailyData.objects.filter(student=student)
-        context['weekly_score_list'] = WeeklyData.objects.filter(student=student)
-
-        # start_date = self.request.GET.get('start')
-        # finish_date = self.request.GET.get('finish')
-        # if start_date:
-        #     if finish_date:
-        #         start = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
-        #         finish = datetime.datetime.strptime(finish_date, '%Y-%m-%d').date()
-        #         print(start, finish)
-        #         start = convert_to_localtime(start)
-        #         finish = convert_to_localtime(finish)
-        #         print(start, finish)
-        #         # if start <= finish:
-        #         #     interval_a = start
-        #         #     interval_b = finish
-        #         #     print(interval_a, interval_b)
-        return context
+    if request.method == "POST":
+        start_date = request.POST.get("fromdate")
+        finish_date = request.POST.get("todate")
+        finish_date_search = datetime.datetime.strptime(finish_date, '%Y-%m-%d')
+        finish_date_search += datetime.timedelta(days=1)
+        finish_date_search = datetime.datetime.strftime(finish_date_search, '%Y-%m-%d')
+        conduct_list = Conduct.objects.filter(student=student, date__range=[start_date, finish_date_search])
+        daily_score_list = DailyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
+        weekly_score_list = WeeklyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
+        context = {'student':student, 'conduct_list':conduct_list, 'daily_score_list':daily_score_list, 'weekly_score_list':weekly_score_list}
+        context['start_date'] = start_date
+        context['finish_date'] = finish_date
+        return render(request, 'school/student_detail.html', context)
+    else:
+        conduct_list = Conduct.objects.filter(student=student)
+        daily_score_list = DailyData.objects.filter(student=student)
+        weekly_score_list = WeeklyData.objects.filter(student=student)
+        context = {'student':student, 'conduct_list':conduct_list, 'daily_score_list':daily_score_list, 'weekly_score_list':weekly_score_list}
+        return render(request, 'school/student_detail.html', context)
 
 class GenerateReport(CreateView):
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get(self.pk_url_kwarg)
+        
+        start_date = request.GET.get("start_date")
+        finish_date = request.GET.get("finish_date")
+
+        print(start_date, finish_date)
+
         student = Student.objects.get(id=pk)
         group = student.group_set.all()
-        conduct_list = Conduct.objects.filter(student=student)
-        daily_score_list = DailyData.objects.filter(student=student)
-        weekly_score_list = WeeklyData.objects.filter(student=student)
+
+        if not start_date:
+            conduct_list = Conduct.objects.filter(student=student)
+            daily_score_list = DailyData.objects.filter(student=student)
+            weekly_score_list = WeeklyData.objects.filter(student=student)
+        else: 
+            finish_date_search = datetime.datetime.strptime(finish_date, '%Y-%m-%d')
+            finish_date_search += datetime.timedelta(days=1)
+            finish_date_search = datetime.datetime.strftime(finish_date_search, '%Y-%m-%d')
+            conduct_list = Conduct.objects.filter(student=student, date__range=[start_date, finish_date_search])
+            daily_score_list = DailyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
+            weekly_score_list = WeeklyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
 
         # Cabecera
         wb = Workbook()
@@ -214,7 +227,7 @@ class GenerateReport(CreateView):
 
                 cell_name = ws['H{}'.format(row)]
                 cell_name.value = weekly_score.weekly_score
-                cell_date.alignment = Alignment(horizontal='center', vertical='center')
+                cell_name.alignment = Alignment(horizontal='center', vertical='center')
                 cell_name.font = Font(name='Calibri', size="12")
                 ws.merge_cells('H{}:M{}'.format(row, row))
             

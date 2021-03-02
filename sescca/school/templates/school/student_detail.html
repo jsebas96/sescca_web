@@ -39,28 +39,30 @@
                                 {% endif %}
                             </p>
                         </div>
-                        <div class="position-relative mt-2 mb-2" style="border:  5px solid #C5BEE8; padding:2%; border-radius:5px;">
-                            <p style="color:black"><b  class="mb-3">Seleccionar Período</b></p> 
-                            <label for="start">Desde:</label>
-                            <input type="date" id="start" name="trip-start"
-                                value="2021-01-01"
-                                min="2021-01-01" max="2021-03-01" />
-                            <label for="finish">Hasta:</label>
-                            <input type="date" id="finish" name="trip-start"
-                                value="2021-03-01"
-                                min="2021-01-01" />
-                            <button type="button" class="btn btn-info ml-2" id="filter" onclick="filterDate()">Filtrar</button>
-                        </div>
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="position-relative mt-2 mb-2" style="border:  5px solid #C5BEE8; padding:2%; border-radius:5px;">
+                                <p style="color:black"><b  class="mb-3">Seleccionar Período</b></p> 
+                                <label for="start">Desde:</label>
+                                <input type="date" id="start" name="fromdate"
+                                    {% if start_date %}
+                                        value="{{ start_date }}"
+                                    {% else %}
+                                        value="2021-01-01"
+                                    {% endif %}
+                                    min="2021-01-01" />
+                                <label for="finish">Hasta:</label>
+                                <input type="date" id="finish" name="todate"
+                                    {% if finish_date %}
+                                        value="{{ finish_date }}"
+                                    {% endif %}
+                                    />
+                                <button type="submit" class="btn btn-info ml-2" id="filter">Filtrar</button>
+                            </div>
+                        </form>
                         <div class="position-relative mt-2 mb-2">
                             <table class="table table-borderless table-striped" id="student_table">
                             <caption>REPORTE ESTUDIANTE</caption>
-                                {% comment %} <thead class="thead-dark">
-                                    <tr class="text-center">
-                                        <th scope="col"></th>
-                                        <th scope="col"></th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead> {% endcomment %}
                                 <tbody>
                                     <tr>
                                         <td style="color:#00A9FE;"><b>Conductas</b></td>
@@ -87,9 +89,9 @@
                                                     </tbody>
                                                 </table>
                                         
-                                            {% else %}
-                                                <p style="color:gray; margin-left:5%;">No hay registros para el estudiante</p>
-                                            {% endif %}
+                                                {% else %}
+                                                    <p style="color:gray; margin-left:5%;">No hay registros para el estudiante</p>
+                                                {% endif %}
                                         </td>
                                     </tr>
                                     <tr>
@@ -110,16 +112,15 @@
                                                     <tbody>
                                                         {% for daily_score in daily_score_list %}
                                                             <tr>
-                                                                <th scope="row">{{daily_score.date | date:'Y-m-d H:i'}}</th>
+                                                                <th scope="row">{{daily_score.date | date:'Y-m-d'}}</th>
                                                                 <td>{{daily_score.daily_score}}</td>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>
                                                 </table>
-                                        
-                                            {% else %}
-                                                <p style="color:gray; margin-left:5%;">No hay registros para el estudiante</p>
-                                            {% endif %}
+                                                {% else %}
+                                                    <p style="color:gray; margin-left:5%;">No hay registros para el estudiante</p>
+                                                {% endif %}
                                         </td>
                                     </tr>
                                     <tr>
@@ -128,8 +129,7 @@
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4"
->
+                                        <td colspan="4">
                                                 {% if weekly_score_list %}
                                                 <table class="table mb-0">
                                                     <thead>
@@ -141,16 +141,15 @@
                                                     <tbody>
                                                         {% for weekly_score in weekly_score_list %}
                                                             <tr>
-                                                                <th scope="row">{{weekly_score.date | date:'Y-m-d H:i'}}</th>
+                                                                <th scope="row">{{weekly_score.date | date:'Y-m-d'}}</th>
                                                                 <td>{{weekly_score.weekly_score}}</td>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>
                                                 </table>
-                                        
-                                            {% else %}
-                                                <p style="color:gray; margin-left:5%;">No hay registros para el estudiante</p>
-                                            {% endif %}
+                                                {% else %}
+                                                    <p style="color:gray; margin-left:5%;">No hay registros para el estudiante</p>
+                                                {% endif %}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -158,7 +157,7 @@
                         </div>
                     </div>
                     {% if conduct_list or daily_score_list or weekly_score_list %}
-                        <div class="text-center"><a href="{% url 'report' student.id %}" class="btn btn-success">Descargar Reporte .xls</a></div>
+                        <div class="text-center"><a href="{% url 'report' student.id %}" id="download" class="btn btn-success">Descargar Reporte .xls</a></div>
                     {% endif %}
                 </div>
             </div>
@@ -167,6 +166,13 @@
     <script>
         var start = document.getElementById("start");
         var finish = document.getElementById("finish");
+        var download = document.getElementById("download")
+
+        {% if start_date or finish_date%}
+            download.href = download.href + '?start_date=' + start.value + '&finish_date=' + finish.value  
+        {% endif %}
+
+        console.log(download.href)
 
         var today = new Date();
         var dd = today.getDate();
@@ -181,12 +187,9 @@
         }
         today = yyyy + '-' + mm + '-' + dd;
 
-        start.max = today
-        finish.value = today
-        finish.max = today 
-        function filterDate(){
-            const url = "{% url 'ind_report' student.id %}" + "?start=" + start.value + "&finish=" + finish.value 
-            fetch(url);
-        }
+        start.max = today;
+        if (finish.value.length == 0)
+            finish.value = today;
+        finish.max = today;
     </script>
 {% endblock %}

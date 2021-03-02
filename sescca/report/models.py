@@ -12,7 +12,7 @@ class Conduct(models.Model):
 class DailyData(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True, verbose_name='Fecha')
-    dayly_score = models.DecimalField(verbose_name='Promedio Diario', max_digits=5, decimal_places=2, default=000.00)
+    daily_score = models.DecimalField(verbose_name='Promedio Diario', max_digits=5, decimal_places=2, default=000.00)
 
 class WeeklyData(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
