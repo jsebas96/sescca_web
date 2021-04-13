@@ -82,7 +82,7 @@
                                                     <tbody>
                                                         {% for conduct in conduct_list %}
                                                             <tr>
-                                                                <th scope="row">{{conduct.date | date:'Y-m-d H:i'}}</th>
+                                                                <th scope="row">{{conduct.created | date:'Y-m-d H:i'}}</th>
                                                                 <td>{{conduct.conduct}}</td>
                                                             </tr>
                                                         {% endfor %}
@@ -112,7 +112,7 @@
                                                     <tbody>
                                                         {% for daily_score in daily_score_list %}
                                                             <tr>
-                                                                <th scope="row">{{daily_score.date | date:'Y-m-d'}}</th>
+                                                                <th scope="row">{{daily_score.updated | date:'Y-m-d'}}</th>
                                                                 <td>{{daily_score.daily_score}}</td>
                                                             </tr>
                                                         {% endfor %}
@@ -141,7 +141,7 @@
                                                     <tbody>
                                                         {% for weekly_score in weekly_score_list %}
                                                             <tr>
-                                                                <th scope="row">{{weekly_score.date | date:'Y-m-d'}}</th>
+                                                                <th scope="row">{{weekly_score.updated | date:'Y-m-d'}}</th>
                                                                 <td>{{weekly_score.weekly_score}}</td>
                                                             </tr>
                                                         {% endfor %}
@@ -172,7 +172,7 @@
             download.href = download.href + '?start_date=' + start.value + '&finish_date=' + finish.value  
         {% endif %}
 
-        console.log(download.href)
+        // console.log(download.href)
 
         var today = new Date();
         var dd = today.getDate();

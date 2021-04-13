@@ -132,7 +132,7 @@ class GenerateReport(CreateView):
 
             for conduct in conduct_list:
                 cell_date = ws['B{}'.format(row)]
-                cell_date.value = convert_to_localtime(conduct.date)
+                cell_date.value = convert_to_localtime(conduct.created)
                 cell_date.alignment = Alignment(horizontal='center', vertical='center')
                 cell_date.font = Font(name='Calibri', size="12")
                 ws.merge_cells('B{}:G{}'.format(row, row))
@@ -176,7 +176,7 @@ class GenerateReport(CreateView):
 
             for daily_score in daily_score_list:
                 cell_date = ws['B{}'.format(row)]
-                cell_date.value = convert_to_localtime(daily_score.date)
+                cell_date.value = convert_to_localtime(daily_score.updated)
                 cell_date.alignment = Alignment(horizontal='center', vertical='center')
                 cell_date.font = Font(name='Calibri', size="12")
                 ws.merge_cells('B{}:G{}'.format(row, row))
@@ -220,7 +220,7 @@ class GenerateReport(CreateView):
 
             for weekly_score in weekly_score_list:
                 cell_date = ws['B{}'.format(row)]
-                cell_date.value = convert_to_localtime(weekly_score.date)
+                cell_date.value = convert_to_localtime(weekly_score.updated)
                 cell_date.alignment = Alignment(horizontal='center', vertical='center')
                 cell_date.font = Font(name='Calibri', size="12")
                 ws.merge_cells('B{}:G{}'.format(row, row))

@@ -8,13 +8,16 @@ from .models import AutoEvaluation, Disruption
 from .forms import AutoEvaluationForm
 
 from school.models import Student
+from report.models import Conduct, DailyData, WeeklyData
 # Create your views here.
 
 import requests
 import os
+import datetime
+
 def activate_view(request):
     if request.user.is_authenticated:
-        id = 1;
+        id = 1
         value = request.GET.get('val', None)
         if id:
             time = get_object_or_404(AutoEvaluation, id=id)
@@ -100,6 +103,13 @@ def plus_score(request):
                 student.accum_score = student.accum_score + 1
                 student.save()
                 json_response['sent'] = True
+                date = datetime.datetime.now()
+                try:
+                    daily_data = DailyData.objects.get(student=student, created__day=date.day, created__month=date.month, created__year=date.year)
+                    daily_data.daily_score = student.score
+                    daily_data.save()
+                except Exception:
+                    daily_data = DailyData.objects.create(student=student, daily_score=student.score)
             else:
                 print("No hay conexión")
     else:
@@ -119,6 +129,13 @@ def minus_score(request):
                 student.accum_score = student.accum_score - 1
                 student.save()
                 json_response['sent'] = True
+                date = datetime.datetime.now()
+                try:
+                    daily_data = DailyData.objects.get(student=student, created__day=date.day, created__month=date.month, created__year=date.year)
+                    daily_data.daily_score = student.score
+                    daily_data.save()
+                except Exception:
+                    daily_data = DailyData.objects.create(student=student, daily_score=student.score)
             else:
                 print("No hay conexión")
     else:
@@ -137,14 +154,23 @@ def receive_score_from_board(request):
         elif (state == 1) & (student.disruption == True):
             student.score = student.score - 1
             student.accum_score = student.accum_score - 1
+            Conduct.objects.create(student=student, conduct='Levantarse')
             student.disruption = False
         elif (state == 0) & (student.disruption) == True:
             student.score = student.score - 1
             student.accum_score = student.accum_score - 1
+            Conduct.objects.create(student=student, conduct='Levantarse')
             student.disruption = False
         elif (state) == 0 & (student.disruption) == False:
             student.score = student.score + 1
             student.accum_score = student.accum_score + 1
         student.save()
         json_response['received'] = True
+        date = datetime.datetime.now()
+        try:
+            daily_data = DailyData.objects.get(student=student, created__day=date.day, created__month=date.month, created__year=date.year)
+            daily_data.daily_score = student.score
+            daily_data.save()
+        except Exception:
+            daily_data = DailyData.objects.create(student=student, daily_score=student.score)
     return JsonResponse(json_response)
