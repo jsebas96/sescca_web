@@ -25,7 +25,8 @@ SECRET_KEY = '$ng#izkxxjof_rp(vb25ms9#6-+k2#7wac9d^pek^rf1llp5tu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.200', 'sescca.duckdns.org',]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
+                 '192.168.1.200', 'sescca.duckdns.org', ]
 
 
 # Application definition
@@ -83,10 +84,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sesccabase',
-	'USER': 'pi',
-	'PASSWORD': 'OEnj9u#DhhB7E)|*0',
-	'HOST': 'localhost',
-	'PORT': '',
+        'USER': 'pi',
+        'PASSWORD': 'OEnj9u#DhhB7E)|*0',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -134,7 +135,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
-#Auth urls
+# Auth urls
 
 LOGIN_REDIRECT_URL = 'student_list'
 LOGOUT_REDIRECT_URL = 'home'
