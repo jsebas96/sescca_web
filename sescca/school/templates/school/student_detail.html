@@ -41,7 +41,7 @@
                         </div>
                         <form action="" method="POST">
                             {% csrf_token %}
-                            <div class="position-relative mt-2 mb-2" style="border:  5px solid #C5BEE8; padding:2%; border-radius:5px;">
+                            <div class="position-relative mt-2 mb-2 text-center" style="border:  5px solid #C5BEE8; padding:2%; border-radius:5px;">
                                 <p style="color:black"><b  class="mb-3">Seleccionar Período</b></p> 
                                 <label for="start">Desde:</label>
                                 <input type="date" id="start" name="fromdate"
@@ -171,8 +171,6 @@
         {% if start_date or finish_date%}
             download.href = download.href + '?start_date=' + start.value + '&finish_date=' + finish.value  
         {% endif %}
-
-        console.log(download.href)
 
         var today = new Date();
         var dd = today.getDate();
