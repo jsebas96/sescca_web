@@ -1,3 +1,6 @@
 django==2.2
 django-extensions==3.0.9
 mysql-connector-python==8.0.22
+requests==2.25.1
+openpyxl==3.0.6
+django-extensions==3.0.9

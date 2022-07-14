@@ -16,8 +16,8 @@ class BoardView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        section = context['interfaceview_list'].get(name='Vista individual').section
-        view_id = context['interfaceview_list'].get(name='Vista individual').id
+        section = context['interfaceview_list'].get(name='Vista Individual').section
+        view_id = context['interfaceview_list'].get(name='Vista Individual').id
         context['section'] = section
         context['view_id'] = view_id
         return context

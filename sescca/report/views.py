@@ -29,9 +29,9 @@ def IndividualReport(request, pk):
         finish_date_search = datetime.datetime.strptime(finish_date, '%Y-%m-%d')
         finish_date_search += datetime.timedelta(days=1)
         finish_date_search = datetime.datetime.strftime(finish_date_search, '%Y-%m-%d')
-        conduct_list = Conduct.objects.filter(student=student, date__range=[start_date, finish_date_search])
-        daily_score_list = DailyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
-        weekly_score_list = WeeklyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
+        conduct_list = Conduct.objects.filter(student=student, created__range=[start_date, finish_date_search])
+        daily_score_list = DailyData.objects.filter(student=student, created__range=[start_date, finish_date_search])
+        weekly_score_list = WeeklyData.objects.filter(student=student, created__range=[start_date, finish_date_search])
         context = {'student':student, 'conduct_list':conduct_list, 'daily_score_list':daily_score_list, 'weekly_score_list':weekly_score_list}
         context['start_date'] = start_date
         context['finish_date'] = finish_date
@@ -63,9 +63,9 @@ class GenerateReport(CreateView):
             finish_date_search = datetime.datetime.strptime(finish_date, '%Y-%m-%d')
             finish_date_search += datetime.timedelta(days=1)
             finish_date_search = datetime.datetime.strftime(finish_date_search, '%Y-%m-%d')
-            conduct_list = Conduct.objects.filter(student=student, date__range=[start_date, finish_date_search])
-            daily_score_list = DailyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
-            weekly_score_list = WeeklyData.objects.filter(student=student, date__range=[start_date, finish_date_search])
+            conduct_list = Conduct.objects.filter(student=student, created__range=[start_date, finish_date_search])
+            daily_score_list = DailyData.objects.filter(student=student, created__range=[start_date, finish_date_search])
+            weekly_score_list = WeeklyData.objects.filter(student=student, created__range=[start_date, finish_date_search])
 
         # Cabecera
         wb = Workbook()

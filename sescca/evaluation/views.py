@@ -28,7 +28,7 @@ def activate_view(request):
             time.save()
     else:
         raise Http404("User is not authenticated")
-    return render(request, 'dashboard/autoevaluation_form.html')
+    return render(request, 'evaluation/autoevaluation_form.html')
 
 @method_decorator(login_required, name='dispatch')
 class AutoEvaluationView(UpdateView):
@@ -70,7 +70,7 @@ def activate_view(request):
             time.save()
     else:
         raise Http404("User is not authenticated")
-    return render(request, 'dashboard/autoevaluation_form.html')
+    return render(request, 'evaluation/autoevaluation_form.html')
 
 def activate_disruption(request):
     json_response = {'updated':'False'}
