@@ -14,13 +14,16 @@ def timer_interrupt():
         students = Student.objects.filter(section=section)
         for student in students:
             if student.ip_board:
-                response = os.popen(f"ping -c 2 {student.ip_board}").read()
-                if "2 received" in response:
-                    url = "http://" + student.ip_board
-                    r = requests.get(url, params=payload)
-                    print(r.status_code)
-                else:
-                    print("No hay conexión")
+                try:
+                    response = os.popen(f"ping -c 2 {student.ip_board}").read()
+                    if "2 received" in response:
+                        url = "http://" + student.ip_board
+                        r = requests.get(url, params=payload)
+                        print(r.status_code)
+                    else:
+                        print("No hay conexión")
+                except:
+                    pass
     salida = True
     print(salida)
 
