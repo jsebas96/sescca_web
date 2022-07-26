@@ -144,10 +144,10 @@ def minus_score(request):
 
 def receive_score_from_board(request):
     json_response = {'received':'False'}
-    id = int(request.POST.get('id', None))
-    state = int(request.POST.get('state', None))
+    id = int(request.GET.get('id', None))
+    state = int(request.GET.get('state', None))
     if id:
-        student = get_object_or_404(Student, id=id)
+        student = get_object_or_404(Student, id_board=id)
         if (state == 1) & (student.disruption == False):
             student.score = student.score + 1
             student.accum_score = student.accum_score + 1
