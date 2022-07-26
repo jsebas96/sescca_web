@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost',
-                 '192.168.1.200', 'sescca.duckdns.org', ]
+                 '192.168.1.200', '192.168.43.200',  'sescca.duckdns.org', ]
 
 
 # Application definition
